@@ -6,7 +6,7 @@ public class VerificationCodeLimitV2 {
     private static final int MAX_ATTEMPTS = 3;
 
     // 时间间隔为10分钟
-    private static final long INTERRUPT_TIME = 10 * 60 * 1000;
+    private static final long TIME_INTERVAL = 10 * 60 * 1000;
 
     private Map<String, Deque<Long>> userAttempts = new ConcurrentHashMap<>();
 
@@ -14,7 +14,7 @@ public class VerificationCodeLimitV2 {
         long currentTime = System.currentTimeMillis();
         Deque<Long> attempts = userAttempts.computeIfAbsent(userId, k -> new ArrayDeque<>());
         synchronized (attempts) {
-            while (!attempts.isEmpty() && currentTime - attempts.getFirst() > INTERRUPT_TIME) {
+            while (!attempts.isEmpty() && currentTime - attempts.getFirst() > TIME_INTERVAL) {
                 attempts.removeFirst();
             }
             if (attempts.size() < MAX_ATTEMPTS) {
